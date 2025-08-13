@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Tags Added -->
+    <title>Leaf Designs: High-Quality Mobile Wallpapers & Apps</title>
+    <meta name="description" content="Download free high-quality mobile wallpapers and explore beautiful apps from Leaf Designs. We have a huge collection of abstract, nature, and minimalist wallpapers for your phone.">
+    <meta name="keywords" content="wallpapers, mobile wallpapers, free wallpapers, leaf designs, android apps, high quality wallpapers, abstract wallpapers, nature wallpapers">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <style>
+        :root {
+            --color-background: #f8f9fa;
+            --color-text-primary: #1f2937;
+            --color-text-secondary: #6b7280;
+            --color-surface: #ffffff;
+            --color-surface-translucent: hsla(0, 0%, 100%, 0.7);
+            --color-border: #e5e7eb;
+            --color-accent: #2563eb;
+            --color-accent-hover: #1d4ed8;
+            --color-hover-subtle: #f3f4f6;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --shadow-color-lg: rgba(0, 0, 0, 0.1);
+        }
+        html.dark {
+            --color-background: #0a0a0a;
+            --color-text-primary: #f3f4f6;
+            --color-text-secondary: #9ca3af;
+            --color-surface: #111827;
+            --color-surface-translucent: hsla(222, 22%, 11%, 0.7);
+            --color-border: hsla(0, 0%, 100%, 0.1);
+            --color-accent: #3b82f6;
+            --color-accent-hover: #2563eb;
+            --color-hover-subtle: #374151;
+            --shadow-color: rgba(0, 0, 0, 0.35);
+            --shadow-color-lg: rgba(0, 0, 0, 0.5);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text-primary);
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        body.loading main, body.loading nav { display: none; }
+        body::-webkit-scrollbar { display: none; }
+        body.modal-open { overflow: hidden; }
+        .ios-corner { border-radius: 1.75rem; }
+        .ios-corner-sm { border-radius: 1rem; }
+        .ios-corner-lg { border-radius: 2.5rem; }
+        .bg-surface { background-color: var(--color-surface); }
+        .bg-surface-translucent { background-color: var(--color-surface-translucent); }
+        .bg-accent { background-color: var(--color-accent); }
+        .hover\:bg-accent-hover:hover { background-color: var(--color-accent-hover); }
+        .hover\:bg-hover-subtle:hover { background-color: var(--color-hover-subtle); }
+        .text-primary { color: var(--color-text-primary); }
+        .text-secondary { color: var(--color-text-secondary); }
+        .text-on-accent { color: white; }
+        .border-theme { border: 1px solid var(--color-border); }
+        .border-t-theme { border-top: 1px solid var(--color-border); }
+        .shadow-theme { box-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px var(--shadow-color); }
+        .shadow-theme-lg { box-shadow: 0 10px 15px -3px var(--shadow-color-lg), 0 4px 6px -2px var(--shadow-color-lg); }
+        .shadow-theme-2xl { box-shadow: 0 25px 50px -12px var(--shadow-color-lg); }
+        .placeholder-theme::placeholder { color: var(--color-text-secondary); opacity: 0.7; }
+        .ring-accent:focus { outline: none; box-shadow: 0 0 0 2px var(--color-accent); }
+        .wallpaper-card, .category-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .wallpaper-card:hover, .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px var(--shadow-color-lg);
+        }
+        .header, .bottom-nav { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .header-hidden { transform: translateY(-150%); }
+        .bottom-nav-hidden { transform: translateY(150%); }
+        .view, .content-section, .sub-view { display: none; }
+        .view-active, .content-active, .sub-view-active { display: block; }
+        .fade-in-view { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .wallpaper-card-animated {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .modal { transition: opacity 0.3s ease-in-out; }
+        .modal-content { transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; }
+        #subtab-indicator, #bottom-nav-indicator {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-button.active-tab svg { color: white; }
+        .nav-button:not(.active-tab) svg { color: var(--color-text-secondary); }
+        .legal-content h2 { font-size: 1.875rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--color-text-primary); }
+        .legal-content h3 { font-size: 1.25rem; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; color: var(--color-text-primary); }
+        .legal-content p, .legal-content ul, .legal-content li { margin-bottom: 1rem; line-height: 1.75; color: var(--color-text-secondary); }
+        .legal-content ul { list-style-position: inside; list-style-type: disc; padding-left: 1rem; }
+        .legal-content .profile-pic { width: 100px; height: 100px; border-radius: 9999px; margin: 0 auto 1.5rem auto; object-fit: cover; border: 3px solid var(--color-border); }
+        .control-btn { color: var(--color-text-secondary); transition: background-color 0.2s, color 0.2s; }
+        .control-btn.active { background-color: var(--color-accent); color: white; }
+        .control-btn:not(.active):hover { background-color: var(--color-surface); }
+        #language-dropdown { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.2s ease, transform 0.2s ease; max-height: 250px; overflow-y: auto; }
+        #language-dropdown.active { display: block; opacity: 1; transform: translateY(0); }
+        html.dark #search-input { background-color: #1f2937; color: #f9fafb; }
+        
+        #app-preview-scroller { 
+            -ms-overflow-style: none; 
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+        #app-preview-scroller::-webkit-scrollbar { display: none; }
+        #app-preview-scroller > img {
+            scroll-snap-align: center;
+        }
+        .app-preview-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 9999px;
+            background-color: hsla(0, 0%, 100%, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .app-preview-arrow:hover {
+            background-color: white;
+        }
+        .app-preview-arrow:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        html.dark .app-preview-arrow {
+            background-color: hsla(222, 22%, 11%, 0.7);
+        }
+        html.dark .app-preview-arrow:hover {
+            background-color: #111827;
+        }
+        #app-preview-scroll-left { left: 1rem; }
+        #app-preview-scroll-right { right: 1rem; }
+
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--color-text-primary);
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+        .loader-sm { width: 20px; height: 20px; border-width: 2px; }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // Apply theme before page load to prevent flashing
+        (function() {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            function applyTheme() {
+                const currentTheme = localStorage.getItem('theme');
+                if (currentTheme === 'dark' || (!currentTheme && mediaQuery.matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            applyTheme();
+            mediaQuery.addEventListener('change', () => {
+                if (!localStorage.getItem('theme') || localStorage.getItem('theme') === 'system') {
+                    applyTheme();
+                }
+            });
+        })();
+    </script>
+</head>
+<body class="bg-background text-primary loading">
+
+    <!-- Initial Page Loader -->
+    <div id="initial-loader" class="fixed inset-0 flex items-center justify-center bg-background z-50">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header -->
+    <header id="top-header" class="header fixed top-0 left-0 right-0 z-20 p-4">
+        <div class="mx-auto max-w-7xl px-2 flex justify-between items-center">
+            <div class="bg-surface-translucent backdrop-blur-xl border-theme rounded-full px-3 py-2 flex items-center gap-2 shadow-theme-lg">
+                <img src="https://res.cloudinary.com/dihj5zlck/image/upload/v1754892907/IMG_20250811_114406_673_jw7opm.png" alt="Leaf Designs Logo" class="w-7 h-7 rounded-full">
+                <h1 id="main-title" class="text-lg font-bold tracking-tight text-primary">Leaf Designs</h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <div id="search-pill" class="bg-surface-translucent backdrop-blur-xl border-theme rounded-full p-1 shadow-theme-lg">
+                    <button id="search-modal-open" class="w-9 h-9 rounded-full flex items-center justify-center text-secondary hover:bg-hover-subtle transition active:scale-95 transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+                    </button>
+                </div>
+                <div class="bg-surface-translucent backdrop-blur-xl border-theme rounded-full p-1 shadow-theme-lg flex">
+                    <button id="info-modal-open" class="w-9 h-9 rounded-full flex items-center justify-center text-secondary hover:bg-hover-subtle transition active:scale-95 transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pb-32">
+        <!-- Main View (Wallpapers/Apps) -->
+        <div id="main-view" class="view pt-24">
+            <div class="mx-auto max-w-7xl px-6">
+                <!-- Wallpapers Content -->
+                <div id="wallpapers-content" class="content-section">
+                    <section class="mb-6">
+                        <h2 data-translate-key="wallpapers" class="text-xl font-bold text-primary mb-4">Wallpapers</h2>
+                        <div class="relative">
+                            <div id="featured-wallpaper" class="relative ios-corner-lg overflow-hidden aspect-video md:aspect-[21/9] bg-hover-subtle shadow-theme border-theme touch-pan-y">
+                                <div id="featured-slider" class="flex h-full">
+                                    <!-- Slides will be injected by JS -->
+                                </div>
+                            </div>
+                             <div id="featured-indicators" class="mt-4 flex justify-center gap-2">
+                                <!-- Indicators will be injected by JS -->
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <div class="flex justify-start mb-4">
+                            <div id="subtab-container" class="inline-flex bg-surface-translucent p-1 rounded-full relative border-theme">
+                                <div id="subtab-indicator" class="absolute top-1 bottom-1 bg-accent rounded-full"></div>
+                                <button id="all-subtab" data-translate-key="all" class="sub-tab px-5 py-2 text-sm font-semibold rounded-full z-10 transition-colors duration-300 active:scale-95">All</button>
+                                <button id="categories-subtab" data-translate-key="categories" class="sub-tab px-5 py-2 text-sm font-semibold rounded-full z-10 transition-colors duration-300 active:scale-95">Categories</button>
+                            </div>
+                        </div>
+                        <div id="all-wallpapers-view" class="sub-view">
+                            <div id="wallpaper-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-8"></div>
+                        </div>
+                        <div id="category-view" class="sub-view">
+                            <div id="category-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                        </div>
+                    </section>
+                </div>
+                <!-- Apps Content -->
+                <div id="apps-content" class="content-section">
+                    <h2 data-translate-key="featuredApps" class="text-xl font-bold text-primary mb-6">Featured Apps</h2>
+                    <div id="app-card-grid" class="space-y-6"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Search Results View -->
+        <div id="search-results-view" class="view pt-24">
+            <div class="mx-auto max-w-7xl px-6">
+                <div class="flex items-center mb-6">
+                     <button id="back-to-main-view" class="w-10 h-10 bg-surface-translucent backdrop-blur-xl border-theme rounded-full flex items-center justify-center text-secondary hover:bg-hover-subtle transition active:scale-95 transform mr-4">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <h2 id="search-results-title" class="text-2xl font-bold text-primary"></h2>
+                </div>
+                <div id="search-results-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-8"></div>
+            </div>
+        </div>
+        <!-- About View -->
+        <div id="about-view" class="view legal-view pt-12">
+            <div class="mx-auto max-w-4xl px-6">
+                <div class="flex items-center mb-6">
+                    <button id="back-from-about" class="w-10 h-10 bg-surface-translucent backdrop-blur-xl border-theme rounded-full flex items-center justify-center text-secondary hover:bg-hover-subtle transition active:scale-95 transform mr-4">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <h2 data-translate-key="about" class="text-2xl font-bold text-primary">About</h2>
+                </div>
+                <div id="about-content" class="legal-content bg-surface border-theme p-8 rounded-2xl text-center"></div>
+            </div>
+        </div>
+        <!-- Privacy View -->
+        <div id="privacy-view" class="view legal-view pt-12">
+            <div class="mx-auto max-w-4xl px-6">
+                <div class="flex items-center mb-6">
+                    <button id="back-from-privacy" class="w-10 h-10 bg-surface-translucent backdrop-blur-xl border-theme rounded-full flex items-center justify-center text-secondary hover:bg-hover-subtle transition active:scale-95 transform mr-4">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <h2 data-translate-key="privacy" class="text-2xl font-bold text-primary">Privacy Policy</h2>
+                </div>
+                <div id="privacy-content" class="legal-content bg-surface border-theme p-8 rounded-2xl"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav" class="bottom-nav fixed bottom-4 left-1/2 -translate-x-1/2 z-30">
+        <div id="bottom-nav-container" class="flex items-center gap-2 bg-surface-translucent backdrop-blur-xl border-theme shadow-theme-2xl rounded-full p-1.5 relative">
+            <div id="bottom-nav-indicator" class="absolute top-1.5 h-14 bg-accent rounded-full"></div>
+            <button id="wallpapers-tab" class="nav-button flex items-center justify-center w-14 h-14 z-10 rounded-full transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 8h.01" /><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" /><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" /><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" /></svg>
+            </button>
+            <button id="apps-tab" class="nav-button flex items-center justify-center w-14 h-14 z-10 rounded-full transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-triangle-square-circle"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l-4 7h8z" /><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Modals -->
+    <!-- Wallpaper Detail Modal -->
+    <div id="wallpaper-modal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
+        <div class="modal-content w-full max-w-[22rem] transform scale-95 opacity-0">
+            <div id="wallpaper-modal-content" class="relative bg-surface shadow-theme-2xl ios-corner-lg overflow-hidden text-primary">
+                <div class="p-4">
+                    <img id="wallpaper-modal-img" src="" alt="Wallpaper preview" class="w-full h-auto aspect-[9/12] object-cover rounded-3xl shadow-md">
+                </div>
+                <div class="p-5 pt-2">
+                    <h2 id="modal-wallpaper-title" class="text-3xl font-bold"></h2>
+                    <p class="text-sm text-secondary mt-1">by <span id="modal-author-name"></span></p>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-secondary mt-4">
+                        <div><strong>Size:</strong> <span id="modal-file-size"></span></div>
+                        <div><strong>Dimension:</strong> <span id="modal-dimensions"></span></div>
+                        <div class="col-span-2"><strong>Collection:</strong> <span id="modal-collection-name"></span></div>
+                    </div>
+                    <h3 class="text-sm font-semibold text-secondary uppercase tracking-wider mt-5 mb-3">Colours</h3>
+                    <div class="flex justify-between items-center">
+                        <div id="modal-color-palette" class="flex flex-wrap gap-3"></div>
+                        <button id="wallpaper-modal-download" class="w-12 h-12 flex-shrink-0 bg-accent text-on-accent rounded-full flex items-center justify-center hover:bg-accent-hover transition active:scale-95 transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button id="wallpaper-modal-close" class="absolute -top-2 -right-2 bg-surface text-primary w-9 h-9 rounded-full flex items-center justify-center shadow-lg hover:bg-hover-subtle transition active:scale-95 transform z-10 border-theme"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start justify-center p-4 z-50 opacity-0 pointer-events-none">
+        <div id="search-modal-content" class="modal-content relative w-full max-w-2xl bg-surface-translucent border-theme backdrop-blur-xl ios-corner-lg p-6 mt-20 transform scale-95 opacity-0">
+            <button id="search-modal-close" class="absolute top-4 right-4 text-secondary hover:text-primary transition active:scale-95 transform"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <h3 data-translate-key="searchAndFilter" class="text-xl font-bold text-primary mb-4">Search & Filter</h3>
+            <div class="relative mb-6">
+                <svg class="w-5 h-5 text-secondary absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" id="search-input" data-translate-key-placeholder="searchPlaceholder" placeholder="Search all wallpapers..." class="w-full bg-hover-subtle border-theme text-primary placeholder-theme text-sm ios-corner-sm py-3 pl-10 pr-12 ring-accent transition">
+                <button id="search-trigger-btn" class="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-accent text-white rounded-full hover:bg-accent-hover transition active:scale-95 transform">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </button>
+            </div>
+            <div class="mb-6">
+                <h4 data-translate-key="colors" class="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">Colors</h4>
+                <div id="color-palette-grid" class="flex flex-wrap gap-3"></div>
+            </div>
+            <div>
+                <h4 data-translate-key="keywords" class="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">Keywords</h4>
+                <div id="keyword-tags" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Preview Modal -->
+    <div id="app-preview-modal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
+        <div id="app-preview-modal-content" class="modal-content relative w-full max-w-4xl bg-surface border-theme ios-corner-lg transform scale-95 opacity-0 overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-theme flex items-center gap-4 flex-shrink-0">
+                <img id="preview-app-icon" src="" class="w-16 h-16 rounded-2xl flex-shrink-0">
+                <div class="flex-grow">
+                    <h3 id="preview-app-name" class="text-xl font-bold text-primary"></h3>
+                    <p class="text-sm text-secondary">Leaf Designs</p>
+                </div>
+                <button id="app-preview-modal-close" class="ml-auto w-9 h-9 flex-shrink-0 flex items-center justify-center bg-hover-subtle hover:bg-surface border-theme rounded-full transition active:scale-95 transform">
+                    <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="flex-grow p-6 relative">
+                <div id="app-preview-scroller" class="w-full h-full overflow-x-auto">
+                    <div id="preview-screenshots" class="flex gap-4 h-full">
+                        <!-- Screenshots will be injected by JS -->
+                    </div>
+                </div>
+                <button id="app-preview-scroll-left" class="app-preview-arrow">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button id="app-preview-scroll-right" class="app-preview-arrow">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info/Settings Modal -->
+    <div id="info-modal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
+        <div id="info-modal-content" class="modal-content relative w-full max-w-3xl bg-surface border-theme ios-corner-lg p-8 transform scale-95 opacity-0">
+            <button id="info-modal-close" class="absolute top-6 right-6 text-secondary hover:text-primary transition active:scale-95 transform"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div>
+                    <h4 data-translate-key="appearance" class="font-semibold text-primary mb-3">Appearance</h4>
+                    <div class="flex bg-hover-subtle border-theme rounded-full p-1">
+                        <button id="theme-light-btn" class="control-btn flex-1 flex items-center justify-center gap-2 px-3 py-1.5 text-sm rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
+                            <span data-translate-key="light">Light</span>
+                        </button>
+                        <button id="theme-dark-btn" class="control-btn flex-1 flex items-center justify-center gap-2 px-3 py-1.5 text-sm rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 1.992a10 10 0 1 0 9.236 13.838c.341 -.82 -.476 -1.644 -1.298 -1.31a6.5 6.5 0 0 1 -6.864 -10.787l.077 -.08c.551 -.63 .113 -1.653 -.758 -1.653h-.266l-.068 -.006l-.06 -.002z" /></svg>
+                            <span data-translate-key="dark">Dark</span>
+                        </button>
+                        <button id="theme-system-btn" class="control-btn flex-1 flex items-center justify-center gap-2 px-3 py-1.5 text-sm rounded-full">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1v-10z" /><path d="M7 20h10" /><path d="M9 16v4" /><path d="M15 16v4" /></svg>
+                            <span data-translate-key="system">System</span>
+                        </button>
+                    </div>
+                    <div class="relative mt-6">
+                        <h4 data-translate-key="language" class="font-semibold text-primary mb-3">Language</h4>
+                        <button id="language-toggle-btn" class="w-full flex items-center justify-between bg-hover-subtle border-theme rounded-full p-2 pl-4 pr-3 text-primary">
+                            <span id="current-language-display">English</span>
+                            <svg class="w-5 h-5 text-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 16l-6-6h12z"></path></svg>
+                        </button>
+                        <div id="language-dropdown" class="absolute top-full mt-2 w-full bg-surface border-theme rounded-2xl shadow-theme-lg p-2 z-10"></div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-primary mb-3">Follow Us</h4>
+                    <ul class="space-y-3 text-sm text-secondary">
+                        <li><a href="https://x.com/SachinXpert" target="_blank" class="flex items-center gap-3 hover:text-primary transition"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4l11.733 16h4.267l-11.733 -16z" /><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" /></svg><span>X / Twitter</span></a></li>
+                        <li><a href="https://t.me/leafdesigns" target="_blank" class="flex items-center gap-3 hover:text-primary transition"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" /></svg><span>Telegram</span></a></li>
+                    </ul>
+                    <div class="mt-6">
+                        <h4 data-translate-key="legal" class="font-semibold text-primary mb-3">Legal</h4>
+                        <ul class="space-y-3 text-sm text-secondary">
+                            <li><button id="open-about" class="flex items-center gap-3 hover:text-primary transition"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg><span data-translate-key="about">About</span></button></li>
+                            <li><button id="open-privacy" class="flex items-center gap-3 hover:text-primary transition">
+                                <!-- ICON FIXED -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M13 3v4a.997 .997 0 0 0 1 1h4" /><path d="M11 21h-5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v3.5" /><path d="M8 9h1" /><path d="M8 12.994l3 0" /><path d="M8 16.997l2 0" /><path d="M21 15.994c0 4 -2.5 6 -3.5 6s-3.5 -2 -3.5 -6c1 0 2.5 -.5 3.5 -1.5c1 1 2.5 1.5 3.5 1.5" /></svg>
+                                <span data-translate-key="privacy">Privacy Policy</span></button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 border-t-theme pt-8 text-center text-sm text-secondary"><p>&copy; 2025 Leaf Designs. All Rights Reserved.</p></div>
+        </div>
+    </div>
+
+<script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyClDYcGUNS0CA18Ph6IjiJ27B0fuS6rZ4Y",
+      authDomain: "leaf-designs.firebaseapp.com",
+      projectId: "leaf-designs",
+      storageBucket: "leaf-designs.appspot.com",
+      messagingSenderId: "982902657650",
+      appId: "1:982902657650:web:5c0c72621e46bb261c68eb",
+      measurementId: "G-2FY2MXSCML"
+    };
+
+    // Initialize Firebase app
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        let lenis; 
+        
+        const elements = {
+            initialLoader: document.getElementById('initial-loader'),
+            mainView: document.getElementById('main-view'), searchResultsView: document.getElementById('search-results-view'), privacyView: document.getElementById('privacy-view'), aboutView: document.getElementById('about-view'), get allViews() { return [this.mainView, this.searchResultsView, this.privacyView, this.aboutView] }, contentSections: document.querySelectorAll('.content-section'), subViews: document.querySelectorAll('.sub-view'), searchResultsTitle: document.getElementById('search-results-title'), searchResultsGrid: document.getElementById('search-results-grid'), backToMainViewBtn: document.getElementById('back-to-main-view'), backFromPrivacyBtn: document.getElementById('back-from-privacy'), backFromAboutBtn: document.getElementById('back-from-about'), wallpaperGrid: document.getElementById('wallpaper-grid'), featuredContainer: document.getElementById('featured-wallpaper'), featuredSlider: document.getElementById('featured-slider'), featuredIndicators: document.getElementById('featured-indicators'), topHeader: document.getElementById('top-header'), bottomNav: document.getElementById('bottom-nav'), allWallpapersView: document.getElementById('all-wallpapers-view'), categoryView: document.getElementById('category-view'), categoryGrid: document.getElementById('category-grid'), subtabContainer: document.getElementById('subtab-container'), subtabIndicator: document.getElementById('subtab-indicator'), allSubtab: document.getElementById('all-subtab'), categoriesSubtab: document.getElementById('categories-subtab'), bottomNavContainer: document.getElementById('bottom-nav-container'), wallpapersTab: document.getElementById('wallpapers-tab'), appsTab: document.getElementById('apps-tab'), bottomNavIndicator: document.getElementById('bottom-nav-indicator'), navButtons: document.querySelectorAll('.nav-button'), wallpaperModal: document.getElementById('wallpaper-modal'), wallpaperModalContent: document.getElementById('wallpaper-modal-content'), wallpaperModalImg: document.getElementById('wallpaper-modal-img'), wallpaperModalDownload: document.getElementById('wallpaper-modal-download'), searchModal: document.getElementById('search-modal'), searchModalContent: document.getElementById('search-modal-content'), searchPill: document.getElementById('search-pill'), searchModalOpenBtn: document.getElementById('search-modal-open'), searchModalCloseBtn: document.getElementById('search-modal-close'), searchInput: document.getElementById('search-input'), searchTriggerBtn: document.getElementById('search-trigger-btn'), infoModal: document.getElementById('info-modal'), infoModalContent: document.getElementById('info-modal-content'), infoModalOpenBtn: document.getElementById('info-modal-open'), infoModalCloseBtn: document.getElementById('info-modal-close'), modalWallpaperTitle: document.getElementById('modal-wallpaper-title'), modalAuthorName: document.getElementById('modal-author-name'), modalCollectionName: document.getElementById('modal-collection-name'), modalFileSize: document.getElementById('modal-file-size'), modalDimensions: document.getElementById('modal-dimensions'), modalColorPalette: document.getElementById('modal-color-palette'), colorPaletteGrid: document.getElementById('color-palette-grid'), keywordTags: document.getElementById('keyword-tags'), openPrivacyBtn: document.getElementById('open-privacy'), openAboutBtn: document.getElementById('open-about'), aboutContent: document.getElementById('about-content'), privacyContent: document.getElementById('privacy-content'), themeLightBtn: document.getElementById('theme-light-btn'), themeDarkBtn: document.getElementById('theme-dark-btn'), themeSystemBtn: document.getElementById('theme-system-btn'), get themeButtons() { return [this.themeLightBtn, this.themeDarkBtn, this.themeSystemBtn] }, languageToggleBtn: document.getElementById('language-toggle-btn'), languageDropdown: document.getElementById('language-dropdown'), currentLanguageDisplay: document.getElementById('current-language-display'), appCardGrid: document.getElementById('app-card-grid'), appPreviewModal: document.getElementById('app-preview-modal'), appPreviewModalContent: document.getElementById('app-preview-modal-content'), appPreviewModalClose: document.getElementById('app-preview-modal-close'), previewAppIcon: document.getElementById('preview-app-icon'), previewAppName: document.getElementById('preview-app-name'), appPreviewScroller: document.getElementById('app-preview-scroller'), previewScreenshots: document.getElementById('preview-screenshots'),
+            wallpaperModalClose: document.getElementById('wallpaper-modal-close'),
+            appPreviewScrollLeft: document.getElementById('app-preview-scroll-left'),
+            appPreviewScrollRight: document.getElementById('app-preview-scroll-right'),
+        };
+        
+        let lastScrollY = 0; let currentSubView = 'all'; let currentMainTab = null; 
+        const scrollPositions = { wallpapers: 0, apps: 0 };
+        let firstLoad = true;
+        let featuredWallpapers = []; let currentFeaturedIndex = 0; let featuredInterval;
+
+        const supportedLanguages = { 'en': 'English', 'fr': 'Français', 'hi': 'हिन्दी', 'es': 'Español' };
+        const translations = { 
+            en: { wallpapers: 'Wallpapers', featuredApps: 'Featured Apps', all: 'All', categories: 'Categories', download: 'Download', searchAndFilter: 'Search & Filter', searchPlaceholder: 'Search all wallpapers...', colors: 'Colors', keywords: 'Keywords', appearance: 'Appearance', light: 'Light', dark: 'Dark', system: 'System', language: 'Language', auto: 'Auto', legal: 'Legal', about: 'About', privacy: 'Privacy Policy' }, 
+            hi: { wallpapers: 'वॉलपेपर', featuredApps: 'फीचर्ड ऐप्स', all: 'सभी', categories: 'श्रेणियाँ', download: 'डाउनलोड', searchAndFilter: 'खोजें और फ़िल्टर करें', searchPlaceholder: 'सभी वॉलपेपर खोजें...', colors: 'रंग', keywords: 'कीवर्ड', appearance: 'दिखावट', light: 'लाइट', dark: 'डार्क', system: 'सिस्टम', language: 'भाषा', auto: 'ऑटो', legal: 'कानूनी', about: 'हमारे बारे में', privacy: 'गोपनीयता नीति' }, 
+            es: { wallpapers: 'Fondos', featuredApps: 'Apps Destacadas', all: 'Todos', categories: 'Categorías', download: 'Descargar', searchAndFilter: 'Buscar y Filtrar', searchPlaceholder: 'Buscar todos los fondos...', colors: 'Colores', keywords: 'Palabras Clave', appearance: 'Apariencia', light: 'Claro', dark: 'Oscuro', system: 'Sistema', language: 'Idioma', auto: 'Auto', legal: 'Legal', about: 'Sobre Nosotros', privacy: 'Política de Privacidad' }, 
+            fr: { wallpapers: 'Fonds d\'écran', featuredApps: 'Applications Vedettes', all: 'Tout', categories: 'Catégories', download: 'Télécharger', searchAndFilter: 'Chercher et Filtrer', searchPlaceholder: 'Rechercher tous les fonds...', colors: 'Couleurs', keywords: 'Mots Clés', appearance: 'Apparence', light: 'Clair', dark: 'Sombre', system: 'Système', language: 'Langue', auto: 'Auto', legal: 'Légal', about: 'À Propos', privacy: 'Politique de Confidentialité' } 
+        };
+
+        async function fetchCollectionData(collectionName) {
+            try {
+                const querySnapshot = await getDocs(collection(db, collectionName));
+                return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (error) {
+                console.error(`Error fetching ${collectionName}:`, error);
+                elements.initialLoader.innerHTML = `<p class="text-red-500 text-center">Something went wrong.<br>Please check the console and your Firebase setup.</p>`;
+                return null;
+            }
+        }
+
+        function applyAndSaveTheme(theme) { if (theme === 'system') { localStorage.removeItem('theme'); if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark'); } else { localStorage.setItem('theme', theme); if (theme === 'dark') document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark'); } updateActiveThemeButton(); }
+        function updateActiveThemeButton() { const currentTheme = localStorage.getItem('theme') || 'system'; elements.themeButtons.forEach(btn => btn.classList.remove('active')); if (currentTheme === 'light') elements.themeLightBtn.classList.add('active'); else if (currentTheme === 'dark') elements.themeDarkBtn.classList.add('active'); else elements.themeSystemBtn.classList.add('active'); }
+        
+        function applyAndSaveLanguage(lang) { if(lang === 'auto') localStorage.removeItem('lang'); else localStorage.setItem('lang', lang); updateLanguageUI(); }
+        function getAppliedLanguage() { const savedLang = localStorage.getItem('lang'); if (savedLang) return savedLang; const browserLang = navigator.language.split('-')[0]; return supportedLanguages[browserLang] ? browserLang : 'en'; }
+        function updateLanguageUI() { const currentLang = getAppliedLanguage(); const storedLang = localStorage.getItem('lang') || 'auto'; const langName = storedLang === 'auto' ? 'Auto' : supportedLanguages[storedLang]; const translationSet = translations[currentLang] || translations.en; document.querySelectorAll('[data-translate-key]').forEach(el => { const key = el.dataset.translateKey; if (translationSet[key]) el.textContent = translationSet[key]; }); document.querySelectorAll('[data-translate-key-placeholder]').forEach(el => { const key = el.dataset.translateKeyPlaceholder; if (translationSet[key]) el.placeholder = translationSet[key]; }); elements.currentLanguageDisplay.textContent = langName; }
+        function renderLanguageDropdown() { const dropdown = elements.languageDropdown; dropdown.innerHTML = ''; const storedLang = localStorage.getItem('lang') || 'auto'; const createItem = (code, name) => { const button = document.createElement('button'); button.className = 'dropdown-item w-full text-left px-4 py-2 rounded-lg hover:bg-hover-subtle'; button.textContent = name; button.dataset.lang = code; if (code === storedLang) button.classList.add('active'); button.addEventListener('click', () => { applyAndSaveLanguage(code); dropdown.classList.remove('active'); }); return button; }; dropdown.appendChild(createItem('auto', 'Auto (System Default)')); Object.entries(supportedLanguages).sort(([, a], [, b]) => a.localeCompare(b)).forEach(([code, name]) => { dropdown.appendChild(createItem(code, name)); }); }
+        
+        function getImageUrl(w, width, height, isHighRes = false) {
+            if (!w || !w.imageUrl) { return `https://placehold.co/${width}x${height}/e5e7eb/6b7280?text=Image+Not+Found&font=inter`; }
+            if (w.imageUrl.includes('res.cloudinary.com')) {
+                const parts = w.imageUrl.split('/upload/');
+                const baseUrl = parts[0];
+                const publicIdAndVersion = parts[1];
+                if (isHighRes) {
+                    const versionIndex = publicIdAndVersion.indexOf('v');
+                    if (versionIndex !== -1) {
+                        const originalPath = publicIdAndVersion.substring(versionIndex);
+                        return `${baseUrl}/upload/${originalPath}`;
+                    }
+                    return w.imageUrl;
+                } else {
+                    return `${baseUrl}/upload/w_${width},h_${height},c_fill,q_auto,f_auto/${publicIdAndVersion}`;
+                }
+            }
+            return w.imageUrl;
+        }
+
+        function renderWallpapers(targetGrid, filter, searchTerm = '', wallpapers) { 
+            targetGrid.innerHTML = ''; 
+            const lowerCaseSearchTerm = searchTerm.toLowerCase(); 
+            const filtered = wallpapers.filter(w => { 
+                const titleMatch = (w.title || '').toLowerCase().includes(lowerCaseSearchTerm); 
+                const tagMatch = (w.tags || []).some(t => t.toLowerCase().includes(lowerCaseSearchTerm)); 
+                const searchMatch = searchTerm === '' || titleMatch || tagMatch; 
+                const colorMatch = (w.palette || []).includes(filter);
+                const filterMatch = filter === 'all' || (w.tags || []).includes(filter.toLowerCase()) || colorMatch; 
+                return searchMatch && filterMatch; 
+            }); 
+            if (filtered.length === 0) { 
+                targetGrid.innerHTML = `<div class="col-span-full text-center py-10"><p class="text-xl font-semibold text-primary">No Wallpapers Found</p><p class="text-secondary mt-2">Try a different search or filter.</p></div>`; 
+                return; 
+            } 
+            filtered.forEach((w, index) => { 
+                const card = document.createElement('div'); 
+                card.className = 'wallpaper-card-animated group relative overflow-hidden ios-corner cursor-pointer aspect-[9/16] bg-hover-subtle shadow-theme border-theme'; 
+                card.style.animationDelay = `${index * 50}ms`; 
+                card.innerHTML = `<img src="${getImageUrl(w, 400, 700)}" alt="${w.title || 'Wallpaper'}" loading="lazy" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">`; 
+                card.addEventListener('click', () => openWallpaperModal(w)); 
+                targetGrid.appendChild(card); 
+            }); 
+        }
+        
+        function renderFeaturedSlider(wallpapers) {
+            const featured = wallpapers.filter(w => w.isFeatured).slice(0, 4);
+            if (featured.length < 4) {
+                featured.push(...wallpapers.slice(0, 4 - featured.length));
+            }
+            if (featured.length === 0) return;
+            featuredWallpapers = featured;
+
+            const slider = elements.featuredSlider;
+            const indicators = elements.featuredIndicators;
+            slider.innerHTML = '';
+            indicators.innerHTML = '';
+
+            featured.forEach((w, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'w-full h-full flex-shrink-0 relative group cursor-pointer';
+                slide.innerHTML = `<img src="${getImageUrl(w, 1200, 600)}" alt="${w.title || 'Featured'}" class="w-full h-full object-cover">`;
+                slide.addEventListener('click', () => openWallpaperModal(w));
+                slider.appendChild(slide);
+
+                const indicator = document.createElement('button');
+                indicator.className = 'w-2 h-2 rounded-full bg-gray-400 transition-colors duration-300';
+                indicator.addEventListener('click', () => goToFeaturedSlide(index));
+                indicators.appendChild(indicator);
+            });
+
+            updateFeaturedSlider(false);
+            resetFeaturedInterval();
+            addSwipeHandlers();
+        }
+
+        function updateFeaturedSlider(useAnimation = true) {
+            const slider = elements.featuredSlider;
+            slider.style.transition = useAnimation ? 'transform 0.5s ease-in-out' : 'none';
+            slider.style.transform = `translateX(-${currentFeaturedIndex * 100}%)`;
+            
+            const indicators = elements.featuredIndicators.children;
+            if (!indicators) return;
+            Array.from(indicators).forEach((ind, i) => {
+                ind.classList.toggle('bg-accent', i === currentFeaturedIndex);
+                ind.classList.toggle('bg-gray-400', i !== currentFeaturedIndex);
+            });
+        }
+
+        function goToFeaturedSlide(index) {
+            currentFeaturedIndex = index;
+            updateFeaturedSlider();
+            resetFeaturedInterval();
+        }
+
+        function nextFeaturedSlide() {
+            currentFeaturedIndex = (currentFeaturedIndex + 1) % (featuredWallpapers.length || 1);
+            updateFeaturedSlider();
+        }
+
+        function resetFeaturedInterval() {
+            clearInterval(featuredInterval);
+            featuredInterval = setInterval(nextFeaturedSlide, 3000);
+        }
+
+        function addSwipeHandlers() {
+            const slider = elements.featuredContainer;
+            let startX = 0; let currentX = 0; let isDragging = false;
+            slider.addEventListener('touchstart', (e) => { isDragging = true; startX = e.touches[0].clientX; elements.featuredSlider.style.transition = 'none'; clearInterval(featuredInterval); }, { passive: true });
+            slider.addEventListener('touchmove', (e) => { if (!isDragging) return; currentX = e.touches[0].clientX; const diff = currentX - startX; elements.featuredSlider.style.transform = `translateX(calc(-${currentFeaturedIndex * 100}% + ${diff}px))`; }, { passive: true });
+            slider.addEventListener('touchend', () => { if (!isDragging) return; isDragging = false; const diff = currentX - startX; if (Math.abs(diff) > 50) { if (diff < 0) { currentFeaturedIndex = Math.min(featuredWallpapers.length - 1, currentFeaturedIndex + 1); } else { currentFeaturedIndex = Math.max(0, currentFeaturedIndex - 1); } } updateFeaturedSlider(); resetFeaturedInterval(); });
+        }
+        
+        function renderCategories(categories, wallpapers) { 
+            elements.categoryGrid.innerHTML = ''; 
+            categories.forEach((cat) => { 
+                const wallpaperForCat = wallpapers.find(w => (w.tags || []).includes(cat.name.toLowerCase())) || wallpapers[0];
+                if (!wallpaperForCat) return;
+                const count = wallpapers.filter(w => (w.tags || []).includes(cat.name.toLowerCase())).length;
+                const card = document.createElement('div'); 
+                card.className = 'category-card group relative overflow-hidden ios-corner-lg cursor-pointer bg-hover-subtle w-full aspect-video shadow-theme border-theme'; 
+                card.innerHTML = `<img src="${getImageUrl(wallpaperForCat, 600, 300)}" alt="${cat.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"><div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4"><div class="flex items-center gap-2 w-full"><h4 class="text-lg font-bold text-white">${cat.name}</h4><span class="bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full">${count}</span></div></div>`; 
+                card.addEventListener('click', () => showSearchResults(`Category: ${cat.name}`, cat.name, '', wallpapers)); 
+                elements.categoryGrid.appendChild(card); 
+            }); 
+        }
+        
+        function renderAppCards(appsData) { 
+            const grid = elements.appCardGrid; grid.innerHTML = ''; 
+            appsData.forEach(app => { 
+                const card = document.createElement('div'); 
+                card.className = 'bg-surface border-theme ios-corner-lg p-6 shadow-theme'; 
+                card.innerHTML = `<div class="flex gap-5"><div class="flex-shrink-0"><img src="${app.iconUrl}" alt="${app.name} Icon" class="w-20 h-20 rounded-3xl"></div><div class="flex-grow"><h3 class="text-2xl font-bold text-primary">${app.name}</h3><p class="text-secondary mt-1 text-base">${app.description}</p></div></div><div class="mt-6 flex items-center justify-between gap-4"><button data-app-id="${app.id}" class="show-preview-btn bg-hover-subtle hover:bg-surface border-theme text-primary font-semibold py-3 px-6 rounded-full transition">Preview</button><div class="flex items-center gap-4 text-center"><div class="flex-shrink-0"><p class="font-bold text-primary text-lg">${app.rating} <span class="text-yellow-400">★</span></p><p class="text-xs text-secondary">${app.reviews} Reviews</p></div><div class="flex-shrink-0"><p class="font-bold text-primary text-lg">${app.downloads}</p><p class="text-xs text-secondary">Downloads</p></div></div></div><div class="mt-4"><a href="${app.playStoreUrl}" target="_blank" class="w-full bg-gray-800 hover:bg-black dark:bg-gray-200 dark:hover:bg-white text-white dark:text-black font-semibold py-3 rounded-full transition flex items-center justify-center gap-2"><img src="https://res.cloudinary.com/dihj5zlck/image/upload/v1754906909/icons8-google-play-store-96_mv68oc.png" class="w-6 h-6"><span>Get it on Google Play</span></a></div>`; 
+                grid.appendChild(card); 
+            }); 
+            document.querySelectorAll('.show-preview-btn').forEach(button => { button.addEventListener('click', (e) => { const appId = e.currentTarget.dataset.appId; openAppPreviewModal(appId, appsData); }); }); 
+        }
+
+        function populateFilters(wallpapers) { 
+            const { colorPaletteGrid, keywordTags } = elements; 
+            const allColors = [...new Set(wallpapers.flatMap(w => w.palette || []))]; 
+            const allKeywords = [...new Set(wallpapers.flatMap(w => w.tags || []))]; 
+            colorPaletteGrid.innerHTML = ''; 
+            allColors.forEach(color => { 
+                const swatch = document.createElement('button'); 
+                swatch.className = `w-8 h-8 rounded-full border-2 border-white/50 hover:scale-110 transition transform active:scale-95`; 
+                swatch.style.backgroundColor = color;
+                swatch.setAttribute('aria-label', `Filter by ${color}`); 
+                swatch.addEventListener('click', () => { closeModal(elements.searchModal, elements.searchModalContent); showSearchResults(`Color: ${color}`, color, '', wallpapers); }); 
+                colorPaletteGrid.appendChild(swatch); 
+            }); 
+            keywordTags.innerHTML = ''; 
+            allKeywords.slice(0, 15).forEach(tag => { 
+                const tagEl = document.createElement('button'); 
+                tagEl.className = 'bg-hover-subtle hover:bg-surface border-theme text-secondary hover:text-primary text-sm font-medium px-3 py-1.5 rounded-full transition transform active:scale-95'; 
+                tagEl.textContent = tag; 
+                tagEl.addEventListener('click', () => { closeModal(elements.searchModal, elements.searchModalContent); showSearchResults(`Tag: ${tag}`, tag, '', wallpapers); }); 
+                keywordTags.appendChild(tagEl); 
+            }); 
+        }
+        
+        function showView(viewToShow) { const isLegalView = viewToShow.classList.contains('legal-view'); elements.topHeader.classList.toggle('hidden', isLegalView); elements.bottomNav.classList.toggle('hidden', isLegalView); elements.allViews.forEach(v => v.classList.remove('view-active', 'fade-in-view')); viewToShow.classList.add('view-active'); requestAnimationFrame(() => viewToShow.classList.add('fade-in-view')); }
+        
+        function showSearchResults(title, filter, searchTerm = '', wallpapers) { 
+            scrollPositions[currentMainTab] = lenis.scroll;
+            showView(elements.searchResultsView); 
+            elements.searchResultsTitle.textContent = title; 
+            renderWallpapers(elements.searchResultsGrid, filter, searchTerm, wallpapers); 
+            lenis.scrollTo(0, { duration: 0, immediate: true }); 
+        }
+        
+        function switchWallpaperView(view) { if (view === currentSubView && !firstLoad) return; const isAllView = view === 'all'; const { allWallpapersView, categoryView, allSubtab, categoriesSubtab } = elements; const viewToShow = isAllView ? allWallpapersView : categoryView; const viewToHide = isAllView ? categoryView : allWallpapersView; viewToHide.classList.remove('sub-view-active'); viewToShow.classList.add('sub-view-active', 'fade-in-view'); currentSubView = view; updateSubtabIndicator(); const activeColor = 'white'; const inactiveColor = 'var(--color-text-secondary)'; allSubtab.style.color = isAllView ? activeColor : inactiveColor; categoriesSubtab.style.color = !isAllView ? activeColor : inactiveColor; }
+        
+        function updateSubtabIndicator() {
+            const targetTab = currentSubView === 'all' ? elements.allSubtab : elements.categoriesSubtab;
+            if (targetTab) {
+                const containerPadding = parseFloat(getComputedStyle(targetTab.parentElement).paddingLeft);
+                elements.subtabIndicator.style.width = `${targetTab.offsetWidth}px`;
+                elements.subtabIndicator.style.transform = `translateX(${targetTab.offsetLeft - containerPadding}px)`;
+            }
+        }
+        
+        function openModal(modal, content) { modal.classList.remove('opacity-0', 'pointer-events-none'); content.classList.remove('opacity-0', 'scale-95'); document.body.classList.add('modal-open'); lenis.stop(); }
+        function closeModal(modal, content) { modal.classList.add('opacity-0'); content.classList.add('opacity-0', 'scale-95'); setTimeout(() => modal.classList.add('pointer-events-none'), 300); document.body.classList.remove('modal-open'); lenis.start(); }
+        
+        function openWallpaperModal(wallpaper) { 
+            const { wallpaperModal, wallpaperModalContent, wallpaperModalImg, modalWallpaperTitle, modalAuthorName, modalCollectionName, modalFileSize, modalDimensions, modalColorPalette, wallpaperModalDownload } = elements; 
+            if (document.documentElement.classList.contains('dark')) { wallpaperModalContent.style.backgroundColor = '#1A1B24'; wallpaperModalContent.style.color = '#FFFFFF'; } else { wallpaperModalContent.style.backgroundColor = 'var(--color-surface)'; wallpaperModalContent.style.color = 'var(--color-text-primary)'; }
+            const highResUrl = getImageUrl(wallpaper, 0, 0, true);
+            wallpaperModalImg.src = getImageUrl(wallpaper, 800, 1200);
+            wallpaperModalImg.onload = () => { wallpaperModalImg.src = highResUrl; };
+            wallpaperModalDownload.dataset.url = highResUrl; wallpaperModalDownload.dataset.title = wallpaper.title || 'leaf-designs-wallpaper';
+            modalWallpaperTitle.textContent = wallpaper.title || 'Untitled'; modalAuthorName.textContent = wallpaper.author || 'Unknown'; modalCollectionName.textContent = wallpaper.collection || 'N/A'; modalFileSize.textContent = wallpaper.size || 'N/A'; modalDimensions.textContent = wallpaper.dimensions || 'N/A'; 
+            modalColorPalette.innerHTML = ''; 
+            if (wallpaper.palette && wallpaper.palette.length > 0) { 
+                wallpaper.palette.forEach(color => { 
+                    const swatch = document.createElement('button'); 
+                    swatch.className = 'w-8 h-8 rounded-full border-2 border-white/50 relative group active:scale-95 transform transition'; 
+                    swatch.style.backgroundColor = color; 
+                    swatch.innerHTML = `<span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface text-primary border-theme border text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">${color}</span>`; 
+                    swatch.addEventListener('click', (e) => { e.stopPropagation(); copyToClipboard(color, swatch); }); 
+                    modalColorPalette.appendChild(swatch); 
+                }); 
+            } 
+            openModal(elements.wallpaperModal, elements.wallpaperModalContent.parentElement); 
+        }
+        
+        function openAppPreviewModal(appId, appsData) { 
+            const app = appsData.find(a => a.id === appId); if (!app) return; 
+            elements.previewAppIcon.src = app.iconUrl; elements.previewAppName.textContent = app.name; 
+            const screenshotsContainer = elements.previewScreenshots; screenshotsContainer.innerHTML = ''; 
+            (app.screenshots || []).forEach(ssUrl => { 
+                const img = document.createElement('img'); img.src = ssUrl; img.alt = `${app.name} screenshot`; 
+                img.className = 'h-full rounded-lg object-contain flex-shrink-0 snap-center'; 
+                screenshotsContainer.appendChild(img); 
+            }); 
+            openModal(elements.appPreviewModal, elements.appPreviewModalContent); 
+        }
+
+        function switchTab(tabName) { 
+            if (currentMainTab === tabName && !firstLoad) return;
+            if (currentMainTab && !firstLoad) {
+                scrollPositions[currentMainTab] = lenis.scroll;
+            }
+            currentMainTab = tabName; 
+            showView(elements.mainView); 
+            elements.contentSections.forEach(section => section.classList.remove('content-active')); 
+            document.getElementById(`${tabName}-content`).classList.add('content-active'); 
+            const isWallpapersTab = tabName === 'wallpapers'; 
+            elements.searchPill.style.display = isWallpapersTab ? 'flex' : 'none'; 
+            elements.navButtons.forEach(btn => btn.classList.remove('active-tab')); 
+            const activeButton = document.getElementById(`${tabName}-tab`); 
+            activeButton.classList.add('active-tab'); 
+            updateBottomNavIndicator();
+            if (isWallpapersTab) { 
+                switchWallpaperView(currentSubView); 
+            } 
+            requestAnimationFrame(() => {
+                lenis.resize();
+                lenis.scrollTo(scrollPositions[tabName] || 0, { duration: 0, immediate: true }); 
+            });
+        }
+        
+        function updateBottomNavIndicator() {
+            const activeButton = document.querySelector('.nav-button.active-tab');
+            if (activeButton) {
+                const containerPadding = parseFloat(getComputedStyle(activeButton.parentElement).paddingLeft);
+                elements.bottomNavIndicator.style.width = `${activeButton.offsetWidth}px`;
+                elements.bottomNavIndicator.style.transform = `translateX(${activeButton.offsetLeft - containerPadding}px)`;
+            }
+        }
+        
+        function showCopyFeedback(element) { const checkmark = document.createElement('div'); checkmark.className = 'absolute inset-0 flex items-center justify-center bg-green-500/80 rounded-full'; checkmark.innerHTML = `<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`; element.appendChild(checkmark); setTimeout(() => { if (element.contains(checkmark)) element.removeChild(checkmark); }, 1500); }
+        function copyToClipboard(text, element) { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(() => showCopyFeedback(element)).catch(() => fallbackCopy(text, element)); } else { fallbackCopy(text, element); } }
+        function fallbackCopy(text, element) { const textArea = document.createElement('textarea'); textArea.value = text; textArea.style.position = 'fixed'; textArea.style.opacity = '0'; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { document.execCommand('copy'); showCopyFeedback(element); } catch (err) { console.error('Fallback copy method failed.', err); } document.body.removeChild(textArea); }
+        
+        async function forceDownload(url, filename) {
+            const downloadButton = document.getElementById('wallpaper-modal-download');
+            const originalContent = downloadButton.innerHTML;
+            downloadButton.innerHTML = `<span class="loader loader-sm"></span>`;
+            downloadButton.disabled = true;
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.style.display = 'none'; a.href = blobUrl; a.download = filename;
+                document.body.appendChild(a); a.click();
+                window.URL.revokeObjectURL(blobUrl); document.body.removeChild(a);
+            } catch (error) { console.error('Download failed:', error); window.open(url, '_blank');
+            } finally { downloadButton.innerHTML = originalContent; downloadButton.disabled = false; }
+        }
+
+        function bindEvents(wallpapers, appsData) { 
+            lenis.on('scroll', (e) => { const currentScrollY = e.animatedScroll; if (currentScrollY > lastScrollY && currentScrollY > 50) { elements.topHeader.classList.add('header-hidden'); if (!elements.bottomNav.classList.contains('hidden')) { elements.bottomNav.classList.add('bottom-nav-hidden'); } } else if (currentScrollY < lastScrollY) { elements.topHeader.classList.remove('header-hidden'); elements.bottomNav.classList.remove('bottom-nav-hidden'); } lastScrollY = currentScrollY < 0 ? 0 : currentScrollY; }); 
+            elements.wallpapersTab.addEventListener('click', () => switchTab('wallpapers')); 
+            elements.appsTab.addEventListener('click', () => switchTab('apps')); 
+            elements.allSubtab.addEventListener('click', () => switchWallpaperView('all')); 
+            elements.categoriesSubtab.addEventListener('click', () => switchWallpaperView('categories')); 
+            const triggerSearch = () => { const searchTerm = elements.searchInput.value.trim(); if (searchTerm) { elements.searchInput.blur(); closeModal(elements.searchModal, elements.searchModalContent); showSearchResults(`Results for "${searchTerm}"`, 'all', searchTerm, wallpapers); elements.searchInput.value = ''; } }; 
+            elements.searchInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') triggerSearch(); }); 
+            elements.searchTriggerBtn.addEventListener('click', triggerSearch); 
+            
+            const goBackToMain = () => { 
+                showView(elements.mainView); 
+                requestAnimationFrame(() => {
+                    lenis.resize(); 
+                    lenis.scrollTo(scrollPositions[currentMainTab] || 0, { duration: 0, immediate: true });
+                });
+            }; 
+
+            elements.backToMainViewBtn.addEventListener('click', goBackToMain); 
+            elements.backFromPrivacyBtn.addEventListener('click', goBackToMain); 
+            elements.backFromAboutBtn.addEventListener('click', goBackToMain); 
+            elements.openAboutBtn.addEventListener('click', () => { closeModal(elements.infoModal, elements.infoModalContent); showView(elements.aboutView); lenis.scrollTo(0, { duration: 1.2 }); }); 
+            elements.openPrivacyBtn.addEventListener('click', () => { closeModal(elements.infoModal, elements.infoModalContent); showView(elements.privacyView); lenis.scrollTo(0, { duration: 1.2 }); }); 
+            
+            elements.infoModalOpenBtn.addEventListener('click', () => openModal(elements.infoModal, elements.infoModalContent)); 
+            elements.infoModalCloseBtn.addEventListener('click', () => closeModal(elements.infoModal, elements.infoModalContent)); 
+            elements.searchModalOpenBtn.addEventListener('click', () => openModal(elements.searchModal, elements.searchModalContent)); 
+            elements.searchModalCloseBtn.addEventListener('click', () => closeModal(elements.searchModal, elements.searchModalContent)); 
+            elements.wallpaperModalClose.addEventListener('click', () => closeModal(elements.wallpaperModal, elements.wallpaperModalContent.parentElement)); 
+            elements.appPreviewModalClose.addEventListener('click', () => closeModal(elements.appPreviewModal, elements.appPreviewModalContent)); 
+            
+            elements.wallpaperModalDownload.addEventListener('click', (e) => { const url = e.currentTarget.dataset.url; const title = e.currentTarget.dataset.title; if (url && title) { forceDownload(url, `${title}.png`); } });
+
+            elements.appPreviewScrollLeft.addEventListener('click', () => { const scroller = elements.appPreviewScroller; const firstImage = scroller.querySelector('img'); if (firstImage) { scroller.scrollBy({ left: -firstImage.offsetWidth - 16, behavior: 'smooth' }); } });
+            elements.appPreviewScrollRight.addEventListener('click', () => { const scroller = elements.appPreviewScroller; const firstImage = scroller.querySelector('img'); if (firstImage) { scroller.scrollBy({ left: firstImage.offsetWidth + 16, behavior: 'smooth' }); } });
+
+            elements.themeLightBtn.addEventListener('click', () => applyAndSaveTheme('light')); 
+            elements.themeDarkBtn.addEventListener('click', () => applyAndSaveTheme('dark')); 
+            elements.themeSystemBtn.addEventListener('click', () => applyAndSaveTheme('system')); 
+            elements.languageToggleBtn.addEventListener('click', (e) => { e.stopPropagation(); renderLanguageDropdown(); elements.languageDropdown.classList.toggle('active'); }); 
+            document.addEventListener('click', (e) => { if (!elements.languageToggleBtn.contains(e.target) && !elements.languageDropdown.contains(e.target)) { elements.languageDropdown.classList.remove('active'); } });
+            
+            window.addEventListener('resize', () => { updateSubtabIndicator(); updateBottomNavIndicator(); });
+        }
+        
+        async function init() {
+            try {
+                lenis = new Lenis({ lerp: 0.07, smoothWheel: true });
+                function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+                requestAnimationFrame(raf);
+                
+                const [wallpapers, appsData, categories] = await Promise.all([
+                    fetchCollectionData('wallpapers'),
+                    fetchCollectionData('apps'),
+                    fetchCollectionData('categories')
+                ]);
+
+                if (wallpapers === null || appsData === null || categories === null) {
+                    throw new Error("Failed to fetch initial data from Firestore.");
+                }
+
+                elements.aboutContent.innerHTML = `<img src="https://res.cloudinary.com/dihj5zlck/image/upload/v1754892907/IMG_20250811_114406_673_jw7opm.png" alt="Profile Picture" class="profile-pic"><h2 class="text-2xl font-bold text-primary">Sachin Kumar</h2><p class="text-secondary">I'm a passionate developer and designer creating beautiful wallpapers and functional apps.</p>`; 
+                
+                elements.privacyContent.innerHTML = `
+                    <p><strong>Last Updated: 12 August 2025</strong></p>
+                    <p>Welcome to Leaf Designs. We are committed to protecting your privacy. This Privacy Policy explains how we handle information on our website and services.</p>
+                    
+                    <h3>Information We Do Not Collect</h3>
+                    <p>We do not collect any personally identifiable information (PII) from our users. You can browse our website, download wallpapers, and view our apps without creating an account or providing any personal data like your name, email address, or location.</p>
+                    
+                    <h3>Information We Collect Automatically</h3>
+                    <p>To improve our website and services, we use Google Firebase Analytics. This service helps us understand how users interact with our site. The information collected is anonymous and aggregated, and may include:</p>
+                    <ul>
+                        <li>The type of device and browser you are using.</li>
+                        <li>Your country (but not your specific city or address).</li>
+                        <li>Which pages you visit and how long you stay on them.</li>
+                        <li>General interaction with website elements (like button clicks).</li>
+                    </ul>
+                    <p>This data is completely anonymous and cannot be used to identify you personally. It is only used for statistical purposes to help us improve the user experience.</p>
+                    
+                    <h3>Third-Party Links</h3>
+                    <p>Our website contains links to third-party sites, such as the Google Play Store, X (formerly Twitter), and Telegram. Please be aware that we are not responsible for the content or privacy practices of such other sites. We encourage our users to be aware when they leave our site and to read the privacy statements of any other site that collects personally identifiable information.</p>
+                    
+                    <h3>Children's Privacy</h3>
+                    <p>Our services are not directed to individuals under the age of 13. We do not knowingly collect personal information from children under 13. If we become aware that a child under 13 has provided us with personal information, we will take steps to delete such information.</p>
+                    
+                    <h3>Changes to This Privacy Policy</h3>
+                    <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p>
+                    
+                    <h3>Contact Us</h3>
+                    <p>If you have any questions about this Privacy Policy, you can contact us through our social media channels provided on the website.</p>
+                `; 
+                
+                renderFeaturedSlider(wallpapers); 
+                renderWallpapers(elements.wallpaperGrid, 'all', '', wallpapers); 
+                renderCategories(categories, wallpapers); 
+                renderAppCards(appsData); 
+                populateFilters(wallpapers); 
+                
+                updateActiveThemeButton(); 
+                updateLanguageUI(); 
+                bindEvents(wallpapers, appsData);
+                
+                document.body.classList.remove('loading');
+                elements.initialLoader.style.display = 'none';
+                
+                switchTab('wallpapers'); 
+                firstLoad = false; 
+                
+                window.onload = () => {
+                    updateSubtabIndicator();
+                    updateBottomNavIndicator();
+                };
+
+            } catch (error) {
+                console.error("Initialization failed:", error);
+                elements.initialLoader.innerHTML = `<p class="text-red-500 text-center">Failed to load the app.<br>Please try refreshing the page.</p>`;
+            }
+        }
+        
+        init();
+    });
+</script>
+</body>
+</html>
+
