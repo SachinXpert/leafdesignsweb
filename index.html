@@ -448,7 +448,7 @@
 <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Your Firebase configuration
     const firebaseConfig = {
@@ -651,7 +651,7 @@
             const allColors = [...new Set(wallpapers.flatMap(w => w.palette || []))]; 
             const allKeywords = [...new Set(wallpapers.flatMap(w => w.tags || []))]; 
             colorPaletteGrid.innerHTML = ''; 
-            allColors.forEach(color => { 
+            allColors.slice(0, 14).forEach(color => { 
                 const swatch = document.createElement('button'); 
                 swatch.className = `w-8 h-8 rounded-full border-2 border-white/50 hover:scale-110 transition transform active:scale-95`; 
                 swatch.style.backgroundColor = color;
@@ -660,7 +660,7 @@
                 colorPaletteGrid.appendChild(swatch); 
             }); 
             keywordTags.innerHTML = ''; 
-            allKeywords.slice(0, 15).forEach(tag => { 
+            allKeywords.slice(0, 10).forEach(tag => { 
                 const tagEl = document.createElement('button'); 
                 tagEl.className = 'bg-hover-subtle hover:bg-surface border-theme text-secondary hover:text-primary text-sm font-medium px-3 py-1.5 rounded-full transition transform active:scale-95'; 
                 tagEl.textContent = tag; 
@@ -831,15 +831,24 @@
                 function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
                 requestAnimationFrame(raf);
                 
-                const [wallpapers, appsData, categories] = await Promise.all([
+                const [wallpapersData, appsData, categories] = await Promise.all([
                     fetchCollectionData('wallpapers'),
                     fetchCollectionData('apps'),
                     fetchCollectionData('categories')
                 ]);
 
-                if (wallpapers === null || appsData === null || categories === null) {
+                if (wallpapersData === null || appsData === null || categories === null) {
                     throw new Error("Failed to fetch initial data from Firestore.");
                 }
+                
+                // Sort wallpapers by createdAt timestamp in descending order (newest first)
+                // This handles cases where createdAt might be missing on older documents
+                const wallpapers = wallpapersData.sort((a, b) => {
+                    const timeA = a.createdAt?.seconds || 0;
+                    const timeB = b.createdAt?.seconds || 0;
+                    return timeB - timeA;
+                });
+
 
                 elements.aboutContent.innerHTML = `<img src="https://res.cloudinary.com/dihj5zlck/image/upload/v1754892907/IMG_20250811_114406_673_jw7opm.png" alt="Profile Picture" class="profile-pic"><h2 class="text-2xl font-bold text-primary">Sachin Kumar</h2><p class="text-secondary">I'm a passionate developer and designer creating beautiful wallpapers and functional apps.</p>`; 
                 
@@ -905,4 +914,5 @@
 </script>
 </body>
 </html>
+
 
